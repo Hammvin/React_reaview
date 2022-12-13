@@ -11,6 +11,8 @@ import { v4 as uuid } from 'uuid';
 
 function App() {
   const [contacts, setContacts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
 
   //Adding a Contact to the DB
   const addContactHandler = async (contact) => {
@@ -48,6 +50,22 @@ function App() {
     return response.data;
   }
 
+  //Search Handler
+  const searchHandler= (searchTerm) => {
+    setSearchTerm(searchTerm);
+   
+    if(searchTerm !== ""){
+      const newContactList = contacts.filter((contact) => {
+        return Object.values(contact).join(" ")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      })
+      setSearchResult(newContactList);
+    }else{
+      setSearchResult(contacts);
+    }
+  }
+
   //Retrieving Contacts and Updating State
   useEffect(() => {
     const getAllContacts = async () => {
@@ -62,7 +80,11 @@ function App() {
     <div className="ui container"> 
       <Header /> 
         <Routes>
-          <Route path="/" element={<ContactList contacts={contacts} getContactId={removeContactHandler}/>}/>
+          <Route path="/" element={<ContactList 
+          term={searchTerm} searchKeyword={searchHandler}
+          contacts={searchTerm.length < 1 ? contacts : searchResult} 
+          getContactId={removeContactHandler}/>}
+          />
           <Route path="/add" element={<AddContacts addContactHandler={addContactHandler}/>}/>
           <Route path='/edit/:id' element={<EditContacts updateContactHandler={updateContactHandler}/>}/>
           <Route path='/details/:id' element={<ContactDetails  contacts={contacts}/>} />

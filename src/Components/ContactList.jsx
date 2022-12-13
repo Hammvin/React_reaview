@@ -1,16 +1,15 @@
 import React from 'react';
 import ContactCard from './ContactCard';
 import { Link } from 'react-router-dom';
+import { useRef } from 'react';
 
 const ContactList = (props) => {
 
-  // const contacts = [
-  //   {
-  //     id: 1,
-  //     name: "Harvey Hammond",
-  //     email: "harveyh@gmail.com"
-  //   }
-  // ]
+  const inputEl = useRef("");
+
+  const getSearchTerm = () => {
+    props.searchKeyword(inputEl.current.value);
+  }
 
   const deleteContactHandler = (id) => {
     props.getContactId(id);
@@ -32,7 +31,14 @@ const ContactList = (props) => {
       </h2>
       <div className="ui search">
         <div className="ui icon input">
-          <input type="text" placeholder='Search contact' className='prompt' />
+          <input type="text" 
+          ref={inputEl}
+          placeholder='Search contact' 
+          className='prompt' 
+          value={props.term} 
+          onChange={getSearchTerm} 
+          />
+
           <i className='ui search'></i>
         </div>
       </div>
